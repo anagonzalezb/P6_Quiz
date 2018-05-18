@@ -4,7 +4,7 @@ const path = require('path');
 const Sequelize = require('sequelize');
 
 
-const url = process.env.DATABASE_URL || "sqlite:quiz.sqlite";
+const url = process.env.DATABASE_URL || "sqlite:quizzes.sqlite";
 const sequelize = new Sequelize(url);
 
 // To use SQLite data base:
