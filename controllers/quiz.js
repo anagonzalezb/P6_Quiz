@@ -158,19 +158,19 @@ exports.check = (req, res, next) => {
 exports.randomplay = (req, res, next) => {
     var answer = req.query.answer || "";
 
-    req.session.score = req.session.score || 0;
+    req.session.score = req.session.score|| 0;
 
     models.quiz.findAll()
-    .then(function(quizzes){
-        req.session.quizzes = req.session.quizzes || quizzes;
+    .then(function(quiz){
+        req.session.quiz = req.session.quiz|| quiz;
         var quiz = 0;
         while(quiz === 0){
-            var posicion = Math.floor(Math.random()*req.session.quizzes.length);
-            if(posicion === quizzes.length)
+            var posicion = Math.floor(Math.random()*req.session.quiz.length);
+            if(posicion === quiz.length)
                 posicion--;
-            quiz = req.session.quizzes[posicion];
+            quiz = req.session.quiz[posicion];
         }
-        req.session.quizzes[posicion] = 0;
+        req.session.quiz[posicion] = 0;
 
         res.render('quizzes/randomplay',{
             quiz: quiz,
@@ -190,17 +190,19 @@ exports.randomcheck = function (req, res, next) {
 
     var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
     
-    var quizzes = req.session.quizzes;
+    var quiz = req.session.quiz;
 
     if (result) {
         req.session.score++;
         var score = req.session.score; 
     }
     else{
+        
         var score = req.session.score;
-        req.session.quizzes = undefined;
+        req.session.score=0;
+        req.session.quiz = undefined;
     }
-    if (score === quizzes.length){
+    if (score === quiz.length){
         res.render('quizzes/random_nomore', {
            score: score
         });
@@ -210,7 +212,7 @@ exports.randomcheck = function (req, res, next) {
            quiz: req.quiz,
            result: result,
            answer: answer,
-           score: req.session.score
+           score: score
         });
     }
 };
