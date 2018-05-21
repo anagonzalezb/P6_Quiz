@@ -157,29 +157,31 @@ exports.check = (req, res, next) => {
 // GET /quizzes/:quizId/play
 exports.randomplay = (req, res, next) => {
     var answer = req.query.answer || "";
-
-    req.session.score = req.session.score|| 0;
-
+    req.session.score = req.session.score || 0;
     models.quiz.findAll()
-    .then(function(quiz){
-        req.session.quiz = req.session.quiz|| quiz;
-        var quiz = 0;
-        while(quiz === 0){
-            var posicion = Math.floor(Math.random()*req.session.quiz.length);
-            if(posicion === quiz.length)
-                posicion--;
-            quiz = req.session.quiz[posicion];
-        }
-        req.session.quiz[posicion] = 0;
+       .then(function(quizzes) {
+        req.session.preguntas = req.session.preguntas || quizzes;
+        var posicion;
+        posicion = Math.floor(Math.random()*req.session.preguntas.length);
 
-        res.render('quizzes/randomplay',{
+        if (posicion === req.session.preguntas.length) {
+        posicion--;
+        }
+
+        var  quiz = req.session.preguntas[posicion]; 
+        console.log(req.session.preguntas.length);
+        req.session.preguntas.splice(posicion,1);
+        res.render('quizzes/randomplay', {
             quiz: quiz,
             answer: answer,
             score: req.session.score
-        });
-    }).catch(function(error){
-        next(error);
-    });
+            });
+           
+        })
+        .catch(function (error) {
+            next(error);
+        }); 
+    
 };
 
 
@@ -189,9 +191,8 @@ exports.randomcheck = function (req, res, next) {
     var answer = req.query.answer || "";
 
     var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
-    
-    var quiz = req.session.quiz;
-
+    var preguntas= req.session.preguntas;
+   
     if (result) {
         req.session.score++;
         var score = req.session.score; 
@@ -199,10 +200,13 @@ exports.randomcheck = function (req, res, next) {
     else{
         
         var score = req.session.score;
-        req.session.score=0;
-        req.session.quiz = undefined;
+        var preguntas = req.session.preguntas;
+        req.session.preguntas = undefined;
+        req.session.score = 0;
     }
-    if (score === quiz.length){
+    if (preguntas.length===0){
+        req.session.preguntas = undefined;
+        req.session.score = 0;
         res.render('quizzes/random_nomore', {
            score: score
         });
@@ -214,5 +218,7 @@ exports.randomcheck = function (req, res, next) {
            answer: answer,
            score: score
         });
-    }
+ }
+
+    
 };
