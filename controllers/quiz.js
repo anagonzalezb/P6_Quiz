@@ -201,7 +201,7 @@ exports.randomcheck = function (req, res, next) {
         
         var score = req.session.score;
         var preguntas = req.session.preguntas;
-        req.session.preguntas = undefined;
+       // req.session.preguntas = undefined;
         req.session.score = 0;
     }
     if (preguntas.length===0){
