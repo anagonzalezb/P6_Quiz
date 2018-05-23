@@ -5,11 +5,11 @@
         <input type="submit" value="Search">
     </form>
 </div>
-
+<%if(title){%>
 <h1>
     <%= title || "Questions" %>:
 </h1>
-
+<%}%>
 <table>
     <% for (var i in quizzes) { %>
     <% var quiz = quizzes[i]; %>
