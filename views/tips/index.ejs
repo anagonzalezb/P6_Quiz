@@ -11,6 +11,7 @@
 
             <li>
                 <%= tip.text %>
+                <span id="autor"> (by <%= tips_usernames ? tips_usernames[i] : "Anónimo" %>) </span>
 
                 <% if (!accepted && (isAdmin || isQuizAuthor)) { %>
 
