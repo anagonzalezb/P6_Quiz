@@ -6,12 +6,12 @@
         <% var accepted = tip.accepted; %>
         <% var isAdmin = session.user && session.user.isAdmin; %>
         <% var isQuizAuthor = session.user && quizAuthorId && quizAuthorId === session.user.id; %>
-
-        <% if (accepted || isAdmin || isQuizAuthor) { %>
+         <% var isTipAuthor = session.user && tip.AuthorId && tip.AuthorId === session.user.id; %>
+        <% if (accepted || isAdmin || isQuizAuthor || isTipAuthor) { %>
 
             <li>
                 <%= tip.text %>
-                <span id="autor"> (by <%= tips_usernames ? tips_usernames[i] : "Anónimo" %>) </span>
+                (by <%= tip.author = tip.author.username ? tip.authorId : "Anónimo" %>)
 
                 <% if (!accepted && (isAdmin || isQuizAuthor)) { %>
 
