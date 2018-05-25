@@ -291,6 +291,7 @@ exports.randomcheck = function (req, res, next) {
         
         var score = req.session.score;
         var preguntas = req.session.preguntas;
+        req.session.preguntas= undefined;
         req.session.score = 0;
     }
     // si el array tiene longitud cero significa que hemos contestado a todas las preguntas por eso le mete un valor undefined 
