@@ -2,7 +2,6 @@
 <ul>
     <% for (var i in tips) { %>
         <% var tip = tips[i]; %>
-
         <% var accepted = tip.accepted; %>
         <% var isAdmin = session.user && session.user.isAdmin; %>
         <% var isQuizAuthor = session.user && quizAuthorId && quizAuthorId === session.user.id; %>
@@ -21,11 +20,21 @@
 
                 <% } %>
 
+                <% if (isAdmin || isTipAuthor) { %>
+
+                    <a href="/quizzes/<%= quizId %>/tips/<%= tip.id %>/edit">
+                        <button>Edit</button>
+                    </a>
+              
+                <% } %>
+
                 <% if (isAdmin || isQuizAuthor) { %>
+                    
 
                     <a href="/quizzes/<%= quizId %>/tips/<%= tip.id %>?_method=DELETE">
                         <button>Delete</button>
                     </a>
+                
 
                 <% } %>
             </li>
