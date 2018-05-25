@@ -157,10 +157,11 @@ exports.check = (req, res, next) => {
 // GET /quizzes/:quizId/play
 exports.randomplay = (req, res, next) => {
     //cojo la respuesta del query
-    var answer = req.query.answer || "";
-    //inicializo la variable a 0 si empezamos desde el principio o al valor guardado en la sesión si simplemente 
+    var answer = req.query.answer || "";  //inicializo la variable a 0 si empezamos desde el principio o al valor guardado en la sesión si simplemente 
+    
     //estamos continuando con otra pregunta
     req.session.score = req.session.score || 0;
+    
     //promesa con la que cojo todos los quizzes de models(BBDD) y los meto en req.session.preguntas creada de cero por eso tiene el ||
     //por si no está creada que lo rellene con quizzes y si está creada que cargue las preguntas que faltan
     models.quiz.findAll()
@@ -174,21 +175,16 @@ exports.randomplay = (req, res, next) => {
         if (posicion === req.session.preguntas.length) {
         posicion--;
         }
-        //cogemos la pregunta aleatoria con la variable posicion del array preguntas
-        var  quiz = req.session.preguntas[posicion]; 
-        //esto era solo para debuggear
-        console.log(req.session.preguntas.length);
-        //borramos la pregunta( con splice se borra entero del array no pone un cero en el hueco)
-        req.session.preguntas.splice(posicion,1);
-        //Devolvemos la pregunta, respuesta y puntuacion
-        res.render('quizzes/randomplay', {
+        
+        var  quiz = req.session.preguntas[posicion]; //cogemos la pregunta aleatoria con la variable posicion del array preguntas
+        console.log(req.session.preguntas.length);  //esto era solo para debuggear
+        req.session.preguntas.splice(posicion,1);   //borramos la pregunta(con splice se borra entero del array no pone un cero en el hueco)
+        res.render('quizzes/randomplay', {   //Devolvemos la pregunta, respuesta y puntuacion
             quiz: quiz,
             answer: answer,
             score: req.session.score
             });
-           
         })
-        //por si errores
         .catch(function (error) {
             next(error);
         }); 
@@ -198,23 +194,18 @@ exports.randomplay = (req, res, next) => {
 
 // GET /quizzes/randomcheck/:quizId
 exports.randomcheck = function (req, res, next) {
-    //cojo la variable query que es la respuesta
-    var answer = req.query.answer || "";
-    //compruebo si la respuesta está bien y en var se mete o true o false
-    var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();
-    //cargo el array de preguntas 
-    var preguntas= req.session.preguntas;
-   //miro si el resultado es true y aumento la puntuacion
-    if (result) {
+   
+    var answer = req.query.answer || "";    //cojo la variable query que es la respuesta
+    var result = answer.toLowerCase().trim() === req.quiz.answer.toLowerCase().trim();  //compruebo si la respuesta está bien (result es booleano)
+    var preguntas= req.session.preguntas;   //cargo el array de preguntas 
+   
+    if (result) {    //si el resultado es true y aumento la puntuacion
         req.session.score++;
         var score = req.session.score; 
     }
-    //si el resultado no era true se mete aqui, guarda la puntuación en la variable score y la guardada en sesión la inicializa a cero
-    //cargo las preguntas de nuevo 
-    else{
-        
+    else{  //si el resultado no era true, guarda la puntuación en la variable score y la guardada en sesión la inicializa a cero
         var score = req.session.score;
-        var preguntas = req.session.preguntas;
+        var preguntas = req.session.preguntas; //cargo las preguntas de nuevo 
         req.session.score = 0;
     }
     // si el array tiene longitud cero significa que hemos contestado a todas las preguntas por eso le mete un valor undefined 
@@ -222,20 +213,16 @@ exports.randomcheck = function (req, res, next) {
     if (preguntas.length===0){
         req.session.preguntas = undefined;
         req.session.score = 0;
-        //Sacamos por pantalla la vista 
-        res.render('quizzes/random_nomore', {
+        res.render('quizzes/random_nomore', { //Sacamos por pantalla la vista 
            score: score
         });
     }
     else {
-        //Sacamos por pantalla la vista, quiz, answer, score y result
-        res.render('quizzes/random_result', {
+        res.render('quizzes/random_result', { //Sacamos por pantalla la vista, quiz, answer, score y result
            quiz: req.quiz,
            result: result,
            answer: answer,
            score: score
         });
  }
-
-    
 };
